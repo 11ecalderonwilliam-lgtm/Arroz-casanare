@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Concurso Recetas Creativas - Arroz Casanare</title>
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Cooked_Rice.jpg/64px-Cooked_Rice.jpg">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #fffaf0;
+      color: #333;
+    }
+    header {
+      background: #f5c000;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    header img {
+      max-height: 80px;
+      margin-bottom: 10px;
+    }
+    nav {
+      background: #e0a800;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 15px;
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+    h2 {
+      border-bottom: 3px solid #f5c000;
+      padding-bottom: 5px;
+    }
+    .video-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin: 15px 0;
+      padding: 15px;
+    }
+    iframe, video {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    footer {
+      background: #f5c000;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Rice_logo.svg/320px-Rice_logo.svg.png" alt="Logo Arroz Casanare">
+    <h1>Concurso de Recetas Creativas con Arroz Casanare</h1>
+    <p>¡Demuestra tu talento y gana premios increíbles!</p>
+  </header>
+
+  <nav>
+    <a href="#bases">Bases</a>
+    <a href="#participa">Participa</a>
+    <a href="#videos">Videos</a>
+  </nav>
+
+  <div class="container">
+    <section id="bases">
+      <h2>📜 Bases del concurso</h2>
+      <ul>
+        <li>Prepara una receta creativa con <strong>Arroz Casanare</strong>.</li>
+        <li>Graba un video mostrándola (máx. 1 min).</li>
+        <li>Súbelo a tus redes sociales con el hashtag <strong>#RecetaCasanare</strong> y etiquétanos.</li>
+        <li>Fecha límite: <strong>30 de septiembre de 2025</strong>.</li>
+        <li>El jurado elegirá la receta más creativa y divertida.</li>
+      </ul>
+    </section>
+
+    <section id="participa">
+      <h2>📩 Participa</h2>
+      <p>Comparte tu video en redes sociales y envíanos el enlace mediante este formulario:</p>
+      <form action="https://formspree.io/f/mzzzdvvy" method="POST">
+        <label>Nombre:<br><input type="text" name="nombre" required></label><br><br>
+        <label>Email:<br><input type="email" name="email" required></label><br><br>
+        <label>Enlace del video:<br><input type="url" name="video" required></label><br><br>
+        <button type="submit">Enviar participación</button>
+      </form>
+    </section>
+
+    <section id="videos">
+      <h2>🎥 Videos destacados</h2>
+
+      <div class="video-card">
+        <h3>Arroz con Mango y Coco</h3>
+        <iframe src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allowfullscreen></iframe>
+      </div>
+
+      <div class="video-card">
+        <h3>Arroz Llanero Creativo</h3>
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@dlabuelaregionalvillavic/video/729123456789" data-video-id="729123456789" style="max-width: 605px;min-width: 325px;">
+        </blockquote>
+        <script async src="https://www.tiktok.com/embed.js"></script>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    © 2025 Arroz Casanare - Concurso Recetas Creativas
+  </footer>
+</body>
+</html>
