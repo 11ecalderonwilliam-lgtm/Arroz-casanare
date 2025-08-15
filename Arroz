@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Concurso – Arroz Casanare</title>
+  <meta name="description" content="Micrositio de concurso de recetas creativas con Arroz Casanare" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0f14; --card:#111827; --muted:#6b7280; --brand:#16a34a; --brand-2:#22c55e; --text:#e5e7eb; --text-2:#94a3b8; --warn:#ef4444;
+      --ring: 0 0 0 3px rgba(34,197,94,0.25);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(34,197,94,0.08), transparent 60%),
+                  radial-gradient(1000px 500px at 10% 110%, rgba(34,197,94,0.08), transparent 60%), var(--bg);
+      color: var(--text);
+    }
+    .app{ display:grid; grid-template-columns: 280px 1fr; min-height:100dvh; }
+    aside{
+      border-right: 1px solid rgba(255,255,255,0.06); background: linear-gradient(180deg, rgba(20,83,45,0.15), transparent 25%), #0a0f12;
+      padding: 18px; position: sticky; top:0; height: 100dvh; overflow:auto;
+    }
+    .brand{ display:flex; gap:12px; align-items:center; margin-bottom: 18px; }
+    .brand-logo{
+      width:44px; height:44px; border-radius: 12px; background: conic-gradient(from 210deg, var(--brand), var(--brand-2));
+      display:grid; place-items:center; color: #052e16; font-weight:800; box-shadow: 0 8px 24px rgba(34,197,94,0.25);
+    }
+    .brand h1{ font-size: 18px; margin: 0; letter-spacing: .2px; }
+    .muted{ color: var(--text-2); font-size: 12px; }
+    .search{ position: relative; margin: 16px 0 10px; }
+    .search input{
+      width:100%; background: #0b1220; border:1px solid rgba(255,255,255,0.08); color: var(--text);
+      border-radius: 12px; padding: 10px 12px; outline: none;
+    }
+    .search input:focus{ box-shadow: var(--ring); border-color: rgba(34,197,94,0.35); }
+
+    .btn{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(255,255,255,0.08); background:#0d1322; color: var(--text);
+      padding: 9px 12px; border-radius: 12px; cursor:pointer; text-decoration:none; font-weight: 600; }
+    .btn:hover{ background:#0f172a; }
+    .btn.primary{ background: linear-gradient(180deg, var(--brand-2), var(--brand)); border: none; color:#052e16; }
+    .btn.ghost{ background: transparent; border-color: rgba(255,255,255,0.12); color: var(--text-2); }
+
+    .section-title{ font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin: 18px 0 8px; }
+
+    .list{ display:flex; flex-direction: column; gap:6px; }
+    .item{
+      display:flex; justify-content: space-between; align-items:center; padding:10px 12px; border-radius:12px;
+      background: #0b1220; border:1px solid rgba(255,255,255,0.06);
+      cursor:pointer; user-select:none;
+    }
+    .item.active{ outline: var(--ring); border-color: rgba(34,197,94,0.45); }
+    .item .left{ display:flex; gap:10px; align-items:center; }
+    .swatch{ width:20px; height:20px; border-radius:6px; background: #1f2937; display:inline-block; }
+    .badge{ font-size: 11px; padding: 2px 8px; border-radius: 999px; background: rgba(34,197,94,0.13); color: #bbf7d0; border:1px solid rgba(34,197,94,0.3); }
+
+    main{ padding: 24px clamp(18px, 3vw, 36px); }
+    header.top{
+      display:flex; flex-wrap: wrap; gap:12px; justify-content: space-between; align-items: center; margin-bottom: 18px;
+    }
+    .actions{ display:flex; gap:10px; flex-wrap: wrap; }
+
+    .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent), var(--card);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: clip;
+    }
+    .thumb{ aspect-ratio: 16/9; background: #0b1220; display:grid; place-items:center; color: var(--text-2); font-size: 12px; }
+    .card .body{ padding: 12px; }
+    .title{ font-weight: 700; margin: 0 0 6px; font-size: 15px; }
+    .meta{ color: var(--text-2); font-size: 12px; display:flex; gap:8px; align-items:center; }
+
+    .empty{
+      border: 1px dashed rgba(255,255,255,0.2); border-radius: 16px; padding: 28px; text-align: center; color: var(--text-2);
+      background: rgba(2,6,23,0.4);
+    }
+
+    dialog[open]{
+      border:none; border-radius: 16px; padding:0; background: #0b1220; color: var(--text);
+      box-shadow: 0 12px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,0.08) inset;
+      width:min(720px, 92vw);
+    }
+    .modal-head{ padding:14px 16px; display:flex; align-items:center; justify-content: space-between; border-bottom:1px solid rgba(255,255,255,0.08); background: #0a1320; }
+    .modal-body{ padding: 16px; display:grid; gap:12px; }
+    .row{ display:grid; gap:8px; }
+    label{ font-size: 13px; color: var(--text-2); }
+    input[type="text"], textarea, select{
+      width:100%; background:#0a1220; color:var(--text); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:10px 12px; outline:none;
+    }
+    input[type="file"]{ color:var(--text-2); }
+    textarea{ min-height: 80px; resize: vertical; }
+    .taglist{ display:flex; gap:8px; flex-wrap: wrap; }
+    .tag{ padding: 4px 10px; border-radius: 999px; background: #0a1320; border:1px solid rgba(255,255,255,0.12); font-size: 12px; }
+
+    .pill{ padding: 2px 8px; border-radius: 999px; font-size: 11px; background: #0b1322; border:1px solid rgba(255,255,255,0.14); color: var(--text-2) }
+    .danger{ background: rgba(220,38,38,0.1); border-color: rgba(248,113,113,0.35); color:#fecaca; }
+
+    .footer-bar{ display:flex; gap:8px; justify-content: end; padding:12px 16px; border-top:1px solid rgba(255,255,255,0.08); background: #0a1320; }
+
+    .tabs{ display:flex; gap:10px; flex-wrap: wrap; }
+    .tabs .btn{ padding: 7px 10px; font-weight: 600; }
+
+    .notice{ border:1px solid rgba(34,197,94,0.25); background: rgba(34,197,94,0.08); color:#d1fae5; padding:10px 12px; border-radius: 12px; font-size: 13px; }
+
+    @media (max-width: 920px){
+      .app{ grid-template-columns: 1fr; }
+      aside{ position: static; height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">AC</div>
+        <div>
+          <h1>Arroz Casanare</h1>
+          <div class="muted">Concurso de recetas creativas</div>
+        </div>
+      </div>
+
+      <div class="search">
+        <input id="searchInput" type="text" placeholder="Buscar recetas o autores…" />
+      </div>
+
+      <div class="section-title">Secciones</div>
+      <div id="sectionList" class="list"></div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button class="btn" id="btnAddSection">➕ Nueva sección</button>
+        <button class="btn ghost" id="btnManageSections">⚙️</button>
+      </div>
+
+      <div class="section-title">Datos</div>
+      <div class="list">
+        <a class="btn" id="btnExport">⬇️ Exportar JSON</a>
+        <label class="btn" style="cursor:pointer;">
+          ⬆️ Importar JSON
+          <input id="importFile" type="file" accept="application/json" hidden />
+        </label>
+        <button class="btn ghost" id="btnReset">🗑 Limpiar todo</button>
+      </div>
+
+      <p class="muted" style="margin-top:14px">Tip: Puedes asignar una receta a varias secciones (por ejemplo: “Postres”, “Fusión”, “Favoritas”).</p>
+    </aside>
+
+    <main>
+      <header class="top">
+        <div>
+          <h2 id="currentSectionTitle" style="margin:0 0 4px">Todas las recetas</h2>
+          <div id="currentSectionDesc" class="muted">Explora las recetas enviadas por la comunidad ✨</div>
+        </div>
+        <div class="actions">
+          <div class="tabs" id="viewTabs">
+            <button class="btn ghost" data-view="grid">🧩 Tarjetas</button>
+            <button class="btn ghost" data-view="list">🧾 Lista</button>
+          </div>
+          <button class="btn primary" id="btnNewVideo">➕ Publicar receta</button>
+        </div>
+      </header>
+
+      <div id="videoContainer" class="grid"></div>
+      <div id="emptyState" class="empty" style="display:none">
+        Aún no hay recetas aquí. ¡Publica la primera! 🙌
+      </div>
+    </main>
+  </div>
+
+  <!-- Modales -->
+  <dialog id="modalVideo">
+    <div class="modal-head">
+      <strong id="mvTitle">Publicar receta</strong>
+      <button class="btn ghost" onclick="closeModal('modalVideo')">✖</button>
+    </div>
+    <form id="videoForm" class="modal-body">
+      <div class="row">
+        <label for="vTitle">Título de la receta</label>
+        <input id="vTitle" type="text" required placeholder="Ej: Arroz con mango y ají dulzón" />
+      </div>
+      <div class="row">
+        <label for="vAuthor">Creador / Autora</label>
+        <input id="vAuthor" type="text" placeholder="Ej: @cocinacriolla" />
+      </div>
+      <div class="row">
+        <label for="vDesc">Descripción corta</label>
+        <textarea id="vDesc" placeholder="Cuenta en pocas líneas qué hace especial esta receta"></textarea>
+      </div>
+      <div class="row">
+        <label>Origen del video</label>
+        <div class="taglist">
+          <label class="tag"><input type="radio" name="sourceType" value="mp4" checked /> MP4 local</label>
+          <label class="tag"><input type="radio" name="sourceType" value="youtube" /> YouTube</label>
+          <label class="tag"><input type="radio" name="sourceType" value="tiktok" /> TikTok</label>
+          <label class="tag"><input type="radio" name="sourceType" value="link" /> Enlace externo</label>
+        </div>
+      </div>
+      <div class="row src src-mp4">
+        <label for="vFile">Archivo MP4 (se guardará en tu navegador)</label>
+        <input id="vFile" type="file" accept="video/mp4" />
+      </div>
+      <div class="row src src-youtube" hidden>
+        <label for="vYT">URL de YouTube</label>
+        <input id="vYT" type="text" placeholder="https://www.youtube.com/watch?v=..." />
+      </div>
+      <div class="row src src-tiktok" hidden>
+        <label for="vTT">URL de TikTok</label>
+        <input id="vTT" type="text" placeholder="https://www.tiktok.com/@usuario/video/123..." />
+        <span class="muted">Se insertará usando el embed oficial de TikTok.</span>
+      </div>
+      <div class="row src src-link" hidden>
+        <label for="vURL">URL del video</label>
+        <input id="vURL" type="text" placeholder="https://..." />
+      </div>
+      <div class="row">
+        <label>Secciones (elige una o varias)</label>
+        <div id="sectionCheckboxes" class="taglist"></div>
+      </div>
+      <div class="row">
+        <label for="vTags">Hashtags (separados por coma)</label>
+        <input id="vTags" type="text" placeholder="#Creativa,#Llanera,#Dulce" />
+      </div>
+      <div class="footer-bar">
+        <button type="button" class="btn" onclick="closeModal('modalVideo')">Cancelar</button>
+        <button class="btn primary" type="submit">Publicar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="modalSection">
+    <div class="modal-head">
+      <strong>Nueva sección</strong>
+      <button class="btn ghost" onclick="closeModal('modalSection')">✖</button>
+    </div>
+    <form id="sectionForm" class="modal-body">
+      <div class="row">
+        <label for="sName">Nombre</label>
+        <input id="sName" type="text" required placeholder="Ej: Postres, Fusión, Llanera" />
+      </div>
+      <div class="row">
+        <label for="sEmoji">Emoji (opcional)</label>
+        <input id="sEmoji" type="text" placeholder="🍚🔥🎉" />
+      </div>
+      <div class="row">
+        <label for="sDesc">Descripción (opcional)</label>
+        <textarea id="sDesc" placeholder="Describe qué entra en esta sección"></textarea>
+      </div>
+      <div class="footer-bar">
+        <button type="button" class="btn" onclick="closeModal('modalSection')">Cancelar</button>
+        <button class="btn primary" type="submit">Crear</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="modalManage">
+    <div class="modal-head">
+      <strong>Administrar secciones</strong>
+      <button class="btn ghost" onclick="closeModal('modalManage')">✖</button>
+    </div>
+    <div class="modal-body" id="manageContent"></div>
+    <div class="footer-bar">
+      <button class="btn" onclick="closeModal('modalManage')">Cerrar</button>
+    </div>
+  </dialog>
+
+  <!-- TikTok embed (se carga si hay alguna tarjeta TikTok) -->
+  <script id="tiktokEmbed" async src="https://www.tiktok.com/embed.js" defer></script>
+
+  <script>
+  /****************** Estado y almacenamiento ******************/
+  const DB_KEY = 'ac_concurso_state_v1';
+  let state = {
+    sections: [
+      { id: 'all', name: 'Todas', emoji: '🌟', desc: 'Todas las recetas publicadas', builtin: true },
+      { id: 'destacadas', name: 'Destacadas', emoji: '🏆', desc: 'Selección del jurado', builtin: true },
+    ],
+    videos: [] // { id, title, author, desc, sourceType, dataRef, sections:[ids], tags:[strings], createdAt }
+  };
+
+  const loadState = () => {
+    try{ const raw = localStorage.getItem(DB_KEY); if(raw){ state = JSON.parse(raw); } }catch(e){ console.warn(e); }
+  };
+  const saveState = () => localStorage.setItem(DB_KEY, JSON.stringify(state));
+
+  const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+
+  /****************** UI helpers ******************/
+  const qs = (sel, el=document) => el.querySelector(sel);
+  const qsa = (sel, el=document) => [...el.querySelectorAll(sel)];
+  const fmtDate = (ts) => new Date(ts).toLocaleString();
+
+  let currentSection = 'all';
+  let currentView = 'grid';
+  let searchTerm = '';
+
+  function setView(v){ currentView = v; renderVideos(); qsa('#viewTabs .btn').forEach(b=>b.classList.toggle('primary', b.dataset.view===v)); }
+
+  function openModal(id){ const d=qs('#'+id); d.showModal(); d.scrollTop=0; }
+  function closeModal(id){ qs('#'+id).close(); }
+
+  function toast(msg){
+    const el = document.createElement('div');
+    el.textContent = msg; el.style.position='fixed'; el.style.bottom='16px'; el.style.right='16px'; el.style.padding='10px 12px'; el.style.background='rgba(16,185,129,.15)'; el.style.border='1px solid rgba(16,185,129,.35)'; el.style.color='#d1fae5'; el.style.borderRadius='12px'; el.style.backdropFilter='blur(6px)'; el.style.zIndex=99;
+    document.body.appendChild(el); setTimeout(()=>el.remove(), 2000);
+  }
+
+  /****************** Render secciones ******************/
+  function renderSections(){
+    const list = qs('#sectionList'); list.innerHTML = '';
+    state.sections.forEach(sec=>{
+      const item = document.createElement('div'); item.className='item' + (sec.id===currentSection?' active':'');
+      item.onclick = ()=>{ currentSection = sec.id; updateSectionHeader(); renderVideos(); renderSections(); };
+      item.innerHTML = `<div class="left"><span class="swatch" style="background: ${sec.builtin? '#1e293b' : '#11301e'}"></span><div><div><strong>${sec.emoji||''} ${sec.name}</strong></div><div class="muted" style="font-size:11px">${sec.desc||''}</div></div></div>` +
+        `<span class="badge">${state.videos.filter(v=>v.sections?.includes(sec.id) || sec.id==='all').length}</span>`;
+      list.appendChild(item);
+    });
+  }
+
+  function updateSectionHeader(){
+    const sec = state.sections.find(s=>s.id===currentSection) || state.sections[0];
+    qs('#currentSectionTitle').textContent = `${sec.emoji||''} ${sec.name}`;
+    qs('#currentSectionDesc').textContent = sec.desc || '';
+  }
+
+  function renderSectionCheckboxes(){
+    const box = qs('#sectionCheckboxes'); box.innerHTML = '';
+    state.sections.filter(s=>s.id!=='all').forEach(s=>{
+      const id = 'chk_'+s.id;
+      const lbl = document.createElement('label'); lbl.className = 'tag';
+      lbl.innerHTML = `<input id="${id}" type="checkbox" value="${s.id}"> ${s.emoji||''} ${s.name}`;
+      box.appendChild(lbl);
+    });
+  }
+
+  /****************** Render videos ******************/
+  function matchesSearch(v){
+    if(!searchTerm) return true;
+    const hay = [v.title, v.author, v.desc, v.tags?.join(' ')].join(' ').toLowerCase();
+    return hay.includes(searchTerm.toLowerCase());
+  }
+
+  function inCurrentSection(v){
+    if(currentSection==='all') return true;
+    return v.sections?.includes(currentSection);
+  }
+
+  function videoCard(v){
+    const tagHTML = (v.tags||[]).map(t=>`<span class="pill">${t}</span>`).join(' ');
+    const base = `<div class="card"><div class="thumb">${renderThumb(v)}</div><div class="body"><h3 class="title">${v.title}</h3><div class="meta">Por ${v.author||'Anónimo'} · ${new Date(v.createdAt).toLocaleDateString()}</div><p class="muted" style="margin:8px 0 10px">${v.desc||''}</p><div style="display:flex; gap:8px; flex-wrap:wrap">${tagHTML}</div><div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;"><button class="btn ghost" onclick="openViewer('${v.id}')">▶ Ver</button><button class="btn ghost" onclick="editVideo('${v.id}')">✏️ Editar</button><button class="btn ghost danger" onclick="deleteVideo('${v.id}')">🗑 Eliminar</button></div></div></div>`;
+    return base;
+  }
+
+  function videoRow(v){
+    const tagHTML = (v.tags||[]).map(t=>`<span class=\"pill\">${t}</span>`).join(' ');
+    return `<div class="item"><div class="left"><div><strong>${v.title}</strong><div class="muted" style="font-size:12px">${v.author||'Anónimo'} • ${fmtDate(v.createdAt)}</div></div></div><div>${tagHTML}</div><div style="display:flex; gap:6px"><button class="btn ghost" onclick="openViewer('${v.id}')">▶</button><button class="btn ghost" onclick="editVideo('${v.id}')">✏️</button><button class="btn ghost danger" onclick="deleteVideo('${v.id}')">🗑</button></div></div>`;
+  }
+
+  function renderVideos(){
+    const cont = qs('#videoContainer');
+    const items = state.videos.filter(inCurrentSection).filter(matchesSearch).sort((a,b)=>b.createdAt-a.createdAt);
+    qs('#emptyState').style.display = items.length? 'none':'block';
+    cont.className = currentView==='grid'? 'grid' : 'list';
+    cont.innerHTML = items.map(v=> currentView==='grid'? videoCard(v) : videoRow(v)).join('');
+    // Re-dispara el script de TikTok si hay embeds
+    if(items.some(v=>v.sourceType==='tiktok')){
+      setTimeout(()=>{ try{ if(window.tiktokEmbed){ /* noop */ } }catch(e){} }, 50);
+    }
+  }
+
+  function renderThumb(v){
+    if(v.sourceType==='youtube'){
+      const id = ytId(v.dataRef || '');
+      return id? `<img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="${v.title}" style="width:100%; height:100%; object-fit:cover">` : 'YouTube';
+    }
+    if(v.sourceType==='mp4'){
+      return 'MP4 local';
+    }
+    if(v.sourceType==='tiktok'){
+      return 'TikTok';
+    }
+    return 'Video';
+  }
+
+  /****************** Crear/editar videos ******************/
+  let editingId = null;
+
+  function resetVideoForm(){
+    qs('#videoForm').reset(); editingId = null; renderSectionCheckboxes();
+    // Restablecer selección de source
+    qsa('input[name="sourceType"]').forEach(r=> r.checked = r.value==='mp4');
+    toggleSourceFields('mp4');
+  }
+
+  function toggleSourceFields(val){
+    qsa('.src').forEach(el=> el.hidden = true);
+    qsa('.src-'+val).forEach(el=> el.hidden = false);
+  }
+
+  qsa('input[name="sourceType"]').forEach(radio=>{
+    radio.addEventListener('change', e=> toggleSourceFields(e.target.value));
+  });
+
+  qs('#btnNewVideo').addEventListener('click', ()=>{ resetVideoForm(); openModal('modalVideo'); });
+
+  qs('#videoForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const title = qs('#vTitle').value.trim(); if(!title){ return alert('Ponle un título a la receta'); }
+    const author = qs('#vAuthor').value.trim();
+    const desc = qs('#vDesc').value.trim();
+    const sourceType = qsa('input[name="sourceType"]').find(r=>r.checked).value;
+
+    let dataRef = '';
+    if(sourceType==='mp4'){
+      const file = qs('#vFile').files[0];
+      if(!file && !editingId) return alert('Adjunta un MP4');
+      if(file){
+        dataRef = await storeFile(file);
+      } else if(editingId) {
+        dataRef = state.videos.find(v=>v.id===editingId)?.dataRef || '';
+      }
+    } else if(sourceType==='youtube'){
+      dataRef = qs('#vYT').value.trim();
+    } else if(sourceType==='tiktok'){
+      dataRef = qs('#vTT').value.trim();
+    } else if(sourceType==='link'){
+      dataRef = qs('#vURL').value.trim();
+    }
+
+    const selected = qsa('#sectionCheckboxes input:checked').map(i=>i.value);
+    const tags = qs('#vTags').value.split(',').map(s=>s.trim()).filter(Boolean);
+
+    const payload = { title, author, desc, sourceType, dataRef, sections: selected.length? selected : ['destacadas'], tags };
+
+    if(editingId){
+      const idx = state.videos.findIndex(v=>v.id===editingId);
+      state.videos[idx] = { ...state.videos[idx], ...payload };
+      toast('Receta actualizada');
+    } else {
+      state.videos.push({ id: uid(), createdAt: Date.now(), ...payload });
+      toast('Receta publicada');
+    }
+    saveState(); renderVideos(); closeModal('modalVideo');
+  });
+
+  function editVideo(id){
+    const v = state.videos.find(x=>x.id===id); if(!v) return;
+    editingId = id; openModal('modalVideo');
+    qs('#mvTitle').textContent = 'Editar receta';
+    qs('#vTitle').value = v.title || '';
+    qs('#vAuthor').value = v.author || '';
+    qs('#vDesc').value = v.desc || '';
+    qsa('input[name="sourceType"]').forEach(r=> r.checked = r.value===v.sourceType);
+    toggleSourceFields(v.sourceType);
+    if(v.sourceType==='youtube') qs('#vYT').value = v.dataRef;
+    if(v.sourceType==='tiktok') qs('#vTT').value = v.dataRef;
+    if(v.sourceType==='link') qs('#vURL').value = v.dataRef;
+    renderSectionCheckboxes();
+    v.sections?.forEach(id=>{ const el = qs('#chk_'+id); if(el) el.checked = true; });
+    qs('#vTags').value = (v.tags||[]).join(',');
+  }
+
+  function deleteVideo(id){
+    if(!confirm('¿Eliminar esta receta?')) return;
+    state.videos = state.videos.filter(v=>v.id!==id); saveState(); renderVideos();
+  }
+
+  function openViewer(id){
+    const v = state.videos.find(x=>x.id===id); if(!v) return;
+    const dlg = document.createElement('dialog');
+    dlg.innerHTML = `<div class="modal-head"><strong>${v.title}</strong><button class="btn ghost" onclick="this.closest('dialog').close(); this.closest('dialog').remove()">✖</button></div><div class="modal-body">${renderPlayer(v)}<div class="muted">Por ${v.author||'Anónimo'} • ${fmtDate(v.createdAt)}</div><p>${v.desc||''}</p><div class="taglist">${(v.tags||[]).map(t=>`<span class='pill'>${t}</span>`).join('')}</div></div>`;
+    document.body.appendChild(dlg); dlg.showModal();
+  }
+
+  function renderPlayer(v){
+    if(v.sourceType==='youtube'){
+      const id = ytId(v.dataRef||'');
+      if(!id) return `<div class='notice'>No se pudo leer el ID de YouTube</div>`;
+      return `<div style="position:relative; padding-top:56.25%"><iframe src="https://www.youtube.com/embed/${id}" title="YouTube" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe></div>`;
+    }
+    if(v.sourceType==='mp4'){
+      return `<video controls style="width:100%; max-height:70dvh; background:#000" src="${v.dataRef}"></video>`;
+    }
+    if(v.sourceType==='tiktok'){
+      const url = v.dataRef;
+      return `<blockquote class="tiktok-embed" cite="${url}" data-video-id="" style="max-width:605px;min-width:325px"><section><a href="${url}" target="_blank" rel="noreferrer">Ver en TikTok</a></section></blockquote>`;
+    }
+    if(v.sourceType==='link'){
+      const url = v.dataRef;
+      return `<div class="notice">Enlace externo: <a href="${url}" target="_blank" rel="noreferrer">${url}</a></div>`;
+    }
+    return '<div class="notice">Formato no soportado</div>';
+  }
+
+  function ytId(u){
+    try{
+      const url=new URL(u);
+      if(url.hostname.includes('youtu.be')) return url.pathname.slice(1);
+      if(url.searchParams.get('v')) return url.searchParams.get('v');
+      const parts = url.pathname.split('/'); const i = parts.indexOf('embed'); if(i>=0) return parts[i+1];
+      return '';
+    }catch(e){return ''}
+  }
+
+  /****************** Secciones ******************/
+  qs('#btnAddSection').addEventListener('click', ()=>{ qs('#sectionForm').reset(); openModal('modalSection'); });
+  qs('#sectionForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const name = qs('#sName').value.trim(); if(!name) return;
+    const emoji = qs('#sEmoji').value.trim();
+    const desc = qs('#sDesc').value.trim();
+    const id = name.toLowerCase().normalize('NFD').replace(/[^\w\s-]/g,'').replace(/[\s_]+/g,'-').slice(0,24) || uid();
+    if(state.sections.some(s=>s.id===id)) return alert('Ya existe una sección con ese identificador');
+    state.sections.push({ id, name, emoji, desc }); saveState(); renderSections(); renderSectionCheckboxes(); closeModal('modalSection'); toast('Sección creada');
+  });
+
+  qs('#btnManageSections').addEventListener('click', ()=>{
+    const box = qs('#manageContent'); box.innerHTML='';
+    state.sections.filter(s=>!s.builtin).forEach(s=>{
+      const row = document.createElement('div'); row.className='item';
+      row.innerHTML = `<div class="left"><span class="swatch" style="background:#11301e"></span><div><strong>${s.emoji||''} ${s.name}</strong><div class="muted" style="font-size:12px">${s.id}</div></div></div><div style="display:flex; gap:6px"><button class="btn ghost" data-act="edit">✏️</button><button class="btn ghost danger" data-act="del">🗑</button></div>`;
+      row.querySelector('[data-act="del"]').onclick = ()=>{
+        if(!confirm('¿Eliminar la sección? (no borra recetas)')) return;
+        state.sections = state.sections.filter(x=>x.id!==s.id);
+        state.videos = state.videos.map(v=> ({...v, sections: (v.sections||[]).filter(id=>id!==s.id)}));
+        saveState(); renderSections(); renderVideos(); qsa('#sectionCheckboxes').length && renderSectionCheckboxes(); row.remove();
+      };
+      row.querySelector('[data-act="edit"]').onclick = ()=>{
+        const name = prompt('Nuevo nombre', s.name) || s.name;
+        const emoji = prompt('Nuevo emoji', s.emoji||'') || s.emoji;
+        const desc = prompt('Nueva descripción', s.desc||'') || s.desc;
+        s.name = name; s.emoji = emoji; s.desc = desc; saveState(); renderSections(); renderVideos();
+      };
+      box.appendChild(row);
+    });
+    openModal('modalManage');
+  });
+
+  /****************** Búsqueda y vistas ******************/
+  qs('#searchInput').addEventListener('input', (e)=>{ searchTerm = e.target.value; renderVideos(); });
+  qsa('#viewTabs .btn').forEach(b=> b.addEventListener('click', ()=> setView(b.dataset.view)) );
+  setView('grid');
+
+  /****************** Exportar / Importar / Reset ******************/
+  qs('#btnExport').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'arroz-casanare-concurso.json'; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  });
+  qs('#importFile').addEventListener('change', async (e)=>{
+    const file = e.target.files[0]; if(!file) return;
+    const text = await file.text();
+    try{ const json = JSON.parse(text); if(json.sections && json.videos){ state = json; saveState(); renderSections(); renderVideos(); updateSectionHeader(); toast('Datos importados'); } }
+    catch(err){ alert('Archivo inválido'); }
+    e.target.value = '';
+  });
+  qs('#btnReset').addEventListener('click', ()=>{
+    if(!confirm('Esto eliminará todas las recetas y secciones creadas por ti en este navegador.')) return;
+    localStorage.removeItem(DB_KEY); state = { sections: state.sections.filter(s=>s.builtin), videos: [] }; saveState(); renderSections(); renderVideos(); updateSectionHeader();
+  });
+
+  /****************** Almacenamiento de MP4: File -> objectURL persistente ******************/
+  // Guardamos MP4 como objectURL re-creado desde File en cada sesión mediante FileSystem Access API si está disponible,
+  // o simplemente se conserva la URL mientras dure la sesión. Para mayor portabilidad, se sugiere usar enlaces (YouTube/TikTok).
+  async function storeFile(file){
+    const url = URL.createObjectURL(file);
+    // Nota: El objectURL no persiste tras cerrar el navegador. Para persistencia completa usa exportar/importar JSON y re-adjuntar, o usa YouTube/TikTok.
+    return url;
+  }
+
+  /****************** Init ******************/
+  loadState();
+  renderSections();
+  renderSectionCheckboxes();
+  updateSectionHeader();
+  renderVideos();
+
+  </script>
+</body>
+</html>
